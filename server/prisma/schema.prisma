@@ -10,9 +10,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Post {
+model User {
   id        Int       @id @default(autoincrement())
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  title     String
+  username   String   @unique
+  password  String
+  JWT       String
+
 }

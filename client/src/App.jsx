@@ -1,21 +1,16 @@
-import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
-import { Home, Dashboard } from "./pages";
+import { Dashboard, Home } from "./pages";
+import { LoginModal } from "./components";
 import "./index.css";
+import { Route, Routes } from "react-router-dom";
 
 function App() {
   return (
-    <BrowserRouter>
-      <header className="w-full h-20 bg-stone-500">
-        <div className="w-full h-full px-8 flex flex-row items-center justify-between ">
-          <div>Fusion Monsters</div>
-          <a href="#">Login</a>
-        </div>
+    <>
+      <header className="w-full h-20 bg-stone-800 flex flex-row items-center justify-between p-4">
+        <div className="bg-indigo-400 w-10 h-10" />
+        <LoginModal />
       </header>
-      <Routes>
-        <Route path="/" element={<Home />}></Route>
-        <Route path="/dashboard" element={<Dashboard />}></Route>
-      </Routes>
-    </BrowserRouter>
+    </>
   );
 }
 
