@@ -14,7 +14,7 @@ export async function comparePasswords(password, hashedPassword) {
 
 export function createJWT(userPayload, secret) {
   const token = jwt.sign(userPayload, secret, {
-    expiresIn: Math.floor(Date.now() / 1000) + 60 * 60,
+    expiresIn: 60 * 60 * 24 * 30,
   });
   return token;
 }

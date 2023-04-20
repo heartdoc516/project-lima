@@ -1,12 +1,29 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Modal from "react-modal";
+import { useUser } from "./UserContext";
 
-const modalStyles = {
-  overlay: {},
-  content: {},
+const registerContent = {
+  apiRoute: "register",
+  linkText: "Already have an account?",
+  header: "Create a new account",
+  buttonText: "Create Account",
+};
+
+const signinContent = {
+  apiRoute: "login",
+  linkText: "Don't have an account?",
+  header: "Sin In",
+  buttonText: "Sign In",
 };
 
 const LoginModal = () => {
+  const [user, setUser] = useUser();
+  const [error, setError] = useState(null);
+  const [formContent, setFormContent] = useState(signinContent);
+
+  const username = useRef("");
+  const password = useRef("");
+
   const [modalIsOpen, setIsOpen] = useState(false);
   Modal.setAppElement("#login-modal");
 
@@ -18,69 +35,94 @@ const LoginModal = () => {
     setIsOpen(false);
   }
 
+  function handleFormContentToggle() {
+    formContent === registerContent
+      ? setFormContent(signinContent)
+      : setFormContent(registerContent);
+  }
+
+  async function handleLogin(e) {
+    e.preventDefault();
+    const response = await fetch(
+      `http://localhost:8080/${formContent.apiRoute}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: username.current?.value,
+          password: password.current?.value,
+        }),
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      setError(data.data);
+    } else {
+      setUser(data.data);
+    }
+  }
+
   return (
     <>
-      <button onClick={openModal} className="text-white bg-red-600 px-6 py-3">
+      <button onClick={openModal} className="text-white bg-green-600 px-6 py-3">
         Log In
       </button>
       <Modal
         isOpen={modalIsOpen}
         shouldCloseOnOverlayClick={true}
         onRequestClose={closeModal}
-        style={modalStyles}
-        className="w-1/3 bg-blue-900 mx-auto p-10"
-        overlayClassName="fixed flex top-0 bottom-0 left-0 right-0 items-center bg-stone-700/50"
+        className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 left-1/2 w-1/3 bg-blue-900 mx-auto p-10"
+        overlayclassName="flex flex-row  top-0 bottom-0 left-0 right-0 items-center bg-stone-700/50"
       >
-        <form>
-          <div class="mb-6">
+        <form onSubmit={handleLogin}>
+          <h2 className="text-center text-white text-3xl">
+            {formContent.header}
+          </h2>
+          <div className="mb-6">
             <label
-              for="email"
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              htmlFor="username"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
               Your email
             </label>
             <input
-              type="email"
-              id="email"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="name@flowbite.com"
+              ref={username}
+              type="text"
+              id="username"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="username"
               required
             />
           </div>
-          <div class="mb-6">
+          <div className="mb-6">
             <label
-              for="password"
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              htmlFor="password"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
               Your password
             </label>
             <input
+              ref={password}
               type="password"
               id="password"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               required
             />
           </div>
-          <div class="flex items-start mb-6">
-            <div class="flex items-center h-5">
-              <input
-                id="remember"
-                type="checkbox"
-                value=""
-                class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
-                required
-              />
-            </div>
-            <label
-              for="remember"
-              class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-            >
-              Remember me
-            </label>
-          </div>
+          <button
+            type="button"
+            onClick={handleFormContentToggle}
+            className="text-white"
+          >
+            {formContent.linkText}
+          </button>
           <button
             type="submit"
-            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg w-40 mx-auto block text-sm sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           >
             Submit
           </button>

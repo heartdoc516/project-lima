@@ -1,5 +1,6 @@
 import { comparePasswords, createJWT } from "../lib/auth.js";
 import prisma from "../prisma/prismaClient.js";
+import { serialize } from "cookie";
 import * as dotenv from "dotenv";
 dotenv.config();
 
@@ -35,16 +36,17 @@ export default async function loginHandler(req, res) {
       process.env.JWT_SECRET
     );
 
-    const jwtUpdatdedUser = await prisma.user.update({
-      where: {
-        username: user.username,
-      },
-      data: {
-        JWT: jwtToken,
-      },
+    const serialized = serialize("token", jwtToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 60 * 60 * 24 * 30,
+      path: "/",
     });
 
-    res.status(200).json({ user: jwtUpdatdedUser });
+    res.setHeader("Set-Cookie", serialized);
+
+    res.status(200).json({ data: user });
   } catch (error) {
     console.log(error);
   }

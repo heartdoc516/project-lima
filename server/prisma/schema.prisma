@@ -16,6 +16,6 @@ model User {
   updatedAt DateTime  @updatedAt
   username   String   @unique
   password  String
-  JWT       String
+
 
 }

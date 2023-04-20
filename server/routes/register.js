@@ -1,5 +1,6 @@
 import prisma from "../prisma/prismaClient.js";
 import { hashPassword, createJWT } from "../lib/auth.js";
+import { serialize } from "cookie";
 import * as dotenv from "dotenv";
 
 dotenv.config();
@@ -32,11 +33,20 @@ export default async function registerHandler(req, res) {
       data: {
         username: username,
         password: encryptedPassword,
-        JWT: jwtToken,
       },
     });
 
-    res.status(201).json({ user: user });
+    const serialized = serialize("token", jwtToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 60 * 60 * 24 * 30,
+      path: "/",
+    });
+
+    res.setHeader("Set-Cookie", serialized);
+
+    res.status(201).json({ data: user });
   } catch (error) {
     console.log(error);
   }
