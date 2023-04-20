@@ -1,13 +1,16 @@
 import React from "react";
 import { useUser } from "./UserContext";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 const Logout = () => {
   const [user, setUser] = useUser();
+  const navigate = useNavigate();
 
   async function handleLogout() {
     const response = await fetch("http://localhost:8080/logout");
     setUser(null);
+    navigate("/");
   }
 
   return (

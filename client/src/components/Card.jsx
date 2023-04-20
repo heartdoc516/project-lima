@@ -1,8 +1,10 @@
 import { heart, monster } from "../assets";
 
-function Card() {
+function Card({ className }) {
   return (
-    <div className="border border-red-600 bg-gray-800 rounded-lg p-1">
+    <div
+      className={`border border-red-600 bg-gray-800 rounded-lg p-1 ${className}`}
+    >
       <img src={monster} alt="monster" className="w-full rounded-t-lg" />
       <div>
         <div className="p-4">
