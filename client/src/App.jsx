@@ -1,5 +1,5 @@
 import { Dashboard, Home } from "./pages";
-import { LoginModal, Logout, MonsterTypeDropdown } from "./components";
+import { LoginModal, Logout } from "./components";
 import "./index.css";
 import { Route, Routes, Link } from "react-router-dom";
 import { useUser } from "./components/UserContext";
@@ -26,7 +26,6 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />}></Route>
         <Route path="/dashboard" element={<Dashboard />}></Route>
-        <Route path="/dropdown" element={<MonsterTypeDropdown />}></Route>
       </Routes>
     </>
   );

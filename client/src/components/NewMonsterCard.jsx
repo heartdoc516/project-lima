@@ -1,6 +1,5 @@
-import { heart, monster } from "../assets";
 import { useState } from "react";
-import { MonsterTypeDropdown } from "../components";
+import { MonsterEnvironmentDropdown, MonsterTypeDropdown } from "../components";
 import { MonsterProperties } from "../utils/MonsterProperties";
 
 function NewMonsterCard({ className }) {
@@ -16,40 +15,32 @@ function NewMonsterCard({ className }) {
     setName(e.target.value);
   }
 
+  function handleType() {}
+
   return (
-    <div
-      className={`border border-red-600 bg-gray-800 rounded-lg p-1 ${className}`}
-    >
-      <img src={monster} alt="monster" className="w-full rounded-t-lg" />
-      <form>
-        <div className="p-4">
-          <div className="flex flex-row justify-between">
-            <input type="text" placeholder="name" onChange={handleName} />
+    <form className={` bg-stone-700 rounded-lg p-3 ${className}`}>
+      <div className="flex flex-row justify-between">
+        <MonsterEnvironmentDropdown
+          className={""}
+          monsterProperties={MonsterProperties}
+          handleGroup={handleGroup}
+        />
+        <MonsterTypeDropdown
+          className={""}
+          MonsterProperties={MonsterProperties}
+          handleType={handleType}
+          group={group}
+        />
+      </div>
 
-            <MonsterTypeDropdown
-              className={""}
-              monsterProperties={MonsterProperties}
-              handleGroup={handleGroup}
-            />
-          </div>
+      <div className="bg-gray-200 h-96 w-full mt-3"></div>
 
-          <h2 className="text-white mt-4">Type</h2>
-          <div className="flex flex-row flex-wrap gap-4 mt-4">
-            {group &&
-              MonsterProperties[group].map((item) => (
-                <div
-                  className="flex-none text-white bg-gray-500 rounded-full px-4"
-                  key={item}
-                >
-                  {item}
-                </div>
-              ))}
-          </div>
-          <h2 className="text-white mt-4">Fusion Bonus</h2>
-          <div className="w-4 h-4 bg-purple-600 rounded-full"></div>
+      <div className="p-4">
+        <div className="flex flex-row justify-center">
+          <input type="text" placeholder="name" onChange={handleName} />
         </div>
-      </form>
-    </div>
+      </div>
+    </form>
   );
 }
 
