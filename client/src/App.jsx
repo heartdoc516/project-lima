@@ -6,6 +6,15 @@ import { useUser } from "./components/UserContext";
 
 function App() {
   const [user, setUser] = useUser();
+  if (!user) {
+    if (sessionStorage) {
+      setUser({
+        username: sessionStorage.getItem("username"),
+        password: sessionStorage.getItem("password"),
+      });
+    }
+  }
+  console.log(sessionStorage);
   console.log(user);
   return (
     <>

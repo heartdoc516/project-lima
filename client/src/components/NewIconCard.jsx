@@ -2,6 +2,7 @@ import { useState } from "react";
 import iconAttributes from "../utils/iconAttributes";
 import iconBackgroundColors from "../utils/iconBackgroundColors";
 import { gear } from "../assets";
+import { motion } from "framer-motion";
 
 function NewIconCard({ className }) {
   const [formData, setFormData] = useState({
@@ -9,6 +10,9 @@ function NewIconCard({ className }) {
     attribute: "",
     backgroundColor: "",
   });
+  const [icon, setIcon] = useState("");
+  const [error, setError] = useState(null);
+  const [generating, setGenerating] = useState(false);
 
   function handleSubjectInput(e) {
     setFormData({ ...formData, subject: e.target.value });
@@ -26,12 +30,59 @@ function NewIconCard({ className }) {
     setFormData({ ...formData, backgroundColor: value });
   }
 
-  async function handleSubmit() {}
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setGenerating(true);
+    if (!formData.subject) {
+      setError("Enter the subject of your icon");
+      return;
+    }
+    if (!formData.attribute) {
+      setError("Select the attribute of your icon");
+      return;
+    }
+    if (!formData.backgroundColor) {
+      setError("Enter the background color of your icon");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:8080/api/v1/dalle", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      setIcon(`data:image/jpeg;base64,${data.photo}`);
+    } catch (err) {
+      alert(err);
+    } finally {
+      setGenerating(false);
+    }
+  }
 
   return (
-    <form className={`flex flex-row bg-stone-800 rounded-lg  ${className}`}>
+    <form
+      onSubmit={handleSubmit}
+      className={`flex flex-row bg-stone-800 rounded-lg  ${className}`}
+    >
       <div className="flex flex-row items-center rounded-l-lg bg-gray-200 w-1/3 ">
-        <img src={gear} alt="gear" className="w-20 mx-auto" />
+        {!generating && icon ? (
+          <img src={icon} alt="icon" className="w-20 mx-auto rounded-md" />
+        ) : (
+          <motion.img
+            initial={{ rotate: 0 }}
+            animate={generating ? { rotate: 1000 } : { rotate: 0 }}
+            transition={generating ? { duration: 15 } : { duration: 0 }}
+            src={gear}
+            alt="gear"
+            className="w-20 mx-auto"
+          />
+        )}
       </div>
       <div className=" rounded-lg w-2/3 py-8 px-4 ">
         <div className="flex flex-col items-center">
@@ -88,11 +139,16 @@ function NewIconCard({ className }) {
             ))}
           </div>
         </div>
+        {error && (
+          <p className="bg-red-500/50 text-white text-center px-4 py-2 rounded-lg mt-6">
+            {error}
+          </p>
+        )}
         <button
           type="submit"
           className="bg-emerald-500 w-full rounded-full mt-10 py-1 text-white text-lg font-semibold"
         >
-          GENERATE ICON
+          {generating ? "GENERATING YOUR ICON..." : "GENERATE ICON"}
         </button>
       </div>
     </form>

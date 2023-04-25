@@ -27,6 +27,7 @@ const LoginModal = () => {
   const [modalIsOpen, setIsOpen] = useState(false);
   Modal.setAppElement("#login-modal");
 
+  console.log(error);
   function openModal() {
     setIsOpen(true);
   }
@@ -63,6 +64,8 @@ const LoginModal = () => {
       setError(data.data);
     } else {
       setUser(data.data);
+      sessionStorage.setItem("username", data.data.username);
+      sessionStorage.setItem("password", data.data.password);
     }
   }
 
@@ -82,6 +85,7 @@ const LoginModal = () => {
           <h2 className="text-center text-white text-3xl">
             {formContent.header}
           </h2>
+          {error && <p className="text-white bg-red-500">{error}</p>}
           <div className="mb-6">
             <label
               htmlFor="username"

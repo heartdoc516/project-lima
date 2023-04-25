@@ -6,6 +6,7 @@ dotenv.config();
 
 export default function verifyToken(req, res, next) {
   const token = req.cookies["token"];
+  console.log(req.cookies);
 
   if (!token) {
     res.status(403).send("A token is required for authentication");

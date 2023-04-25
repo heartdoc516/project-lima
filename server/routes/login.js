@@ -9,7 +9,7 @@ export default async function loginHandler(req, res) {
     const { username, password } = req.body;
 
     if (!username || !password) {
-      res.status(400).send("All inputs are required");
+      res.status(400).json({ data: "All inputs required" });
     }
 
     const user = await prisma.user.findUnique({
@@ -19,13 +19,14 @@ export default async function loginHandler(req, res) {
     });
 
     if (!user) {
-      res.status(400).send("Wrong Credentials");
+      res.status(400).json({ data: "Wrong Credentials" });
     }
 
-    const passwordIsValid = await comparePasswords(password, user.password);
+    const passwordIsValid =
+      (await comparePasswords(password, user.password)) || null;
 
     if (!passwordIsValid) {
-      res.status(400).send("Wrong Credentials");
+      res.status(400).json({ data: "Wrong Credentials" });
     }
 
     const jwtToken = createJWT(

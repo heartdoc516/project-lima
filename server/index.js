@@ -7,6 +7,7 @@ import {
   registerHandler,
   logoutHandler,
 } from "./routes/index.js";
+import dalleRoutes from "./routes/dalleRoutes.js";
 import verifyToken from "./middleware/auth.js";
 
 dotenv.config();
@@ -26,9 +27,11 @@ app.post("/register", registerHandler);
 
 app.get("/logout", logoutHandler);
 
-app.get("/restricted", verifyToken, async (req, res) => {
-  res.status(200).send("restricted content");
+app.get("/cookietest", verifyToken, (req, res) => {
+  res.send("testing cookies");
 });
+
+app.use("/api/v1/dalle", dalleRoutes);
 
 const startServer = async () => {
   app.listen(8080, () => {

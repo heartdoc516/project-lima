@@ -6,7 +6,7 @@ const Dashboard = () => {
   const [user, setUser] = useUser();
   return (
     <main className="bg-stone-300 h-screen">
-      <section className="container mx-auto">
+      <section className="container mx-auto py-10">
         <div>
           {user ? (
             <>
