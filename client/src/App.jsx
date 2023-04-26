@@ -15,8 +15,7 @@ function App() {
       });
     }
   }
-  console.log(sessionStorage);
-  console.log(user);
+
   return (
     <>
       <header className="w-full h-20 bg-stone-800 flex flex-row items-center justify-between p-4">
@@ -27,7 +26,7 @@ function App() {
           <div className="flex flex-row items-center gap-5">
             <div className="text-white">{user.username}</div>
             <Link to="/dashboard" className="text-white bg-blue-600 px-6 py-3">
-              My collection
+              Create
             </Link>
             <Logout />
           </div>

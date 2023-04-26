@@ -13,6 +13,22 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+router.route("/").get(async (req, res) => {
+  try {
+    const posts = await prisma.post.findMany({
+      include: {
+        author: true,
+      },
+    });
+
+    console.log(posts);
+
+    res.status(200).json({ data: posts });
+  } catch (error) {
+    res.status(500).json({ message: error });
+  }
+});
+
 router.route("/").post(async (req, res) => {
   try {
     const { id, username, iconTitle, iconAttribute, icon } = req.body;

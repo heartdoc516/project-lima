@@ -4,8 +4,10 @@ import iconBackgroundColors from "../utils/iconBackgroundColors";
 import { gear } from "../assets";
 import { motion } from "framer-motion";
 import { useUser } from "./UserContext";
+import { useNavigate } from "react-router-dom";
 
 function NewIconCard({ className }) {
+  const navigate = useNavigate();
   const [user, setUser] = useUser();
   const [formData, setFormData] = useState({
     subject: "",
@@ -89,6 +91,7 @@ function NewIconCard({ className }) {
 
       const data = await response.json();
       console.log(data);
+      navigate("/");
     } catch (error) {
       console.log(error);
     } finally {
