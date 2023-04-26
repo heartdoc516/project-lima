@@ -65,6 +65,7 @@ const LoginModal = () => {
     } else {
       setUser(data.data);
       sessionStorage.setItem("username", data.data.username);
+      sessionStorage.setItem("id", data.data.id);
       sessionStorage.setItem("password", data.data.password);
     }
   }

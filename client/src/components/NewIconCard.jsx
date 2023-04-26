@@ -3,30 +3,35 @@ import iconAttributes from "../utils/iconAttributes";
 import iconBackgroundColors from "../utils/iconBackgroundColors";
 import { gear } from "../assets";
 import { motion } from "framer-motion";
+import { useUser } from "./UserContext";
 
 function NewIconCard({ className }) {
+  const [user, setUser] = useUser();
   const [formData, setFormData] = useState({
     subject: "",
     attribute: "",
     backgroundColor: "",
   });
   const [icon, setIcon] = useState("");
+
   const [error, setError] = useState(null);
   const [generating, setGenerating] = useState(false);
+  const [sharing, setSharing] = useState(false);
 
   function handleSubjectInput(e) {
+    setError(false);
     setFormData({ ...formData, subject: e.target.value });
   }
 
   function handleAttributeInput(e) {
     e.preventDefault();
-
+    setError(false);
     setFormData({ ...formData, attribute: e.target.value });
   }
 
   function handleColorInput(e, value) {
     e.preventDefault();
-
+    setError(false);
     setFormData({ ...formData, backgroundColor: value });
   }
 
@@ -65,6 +70,32 @@ function NewIconCard({ className }) {
     }
   }
 
+  async function handleShare(e) {
+    setSharing(true);
+    try {
+      const response = await fetch("http://localhost:8080/api/v1/post", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: user.id,
+          username: user.username,
+          iconTitle: formData.subject,
+          iconAttribute: formData.attribute,
+          icon: icon,
+        }),
+      });
+
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setSharing(false);
+    }
+  }
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -76,8 +107,10 @@ function NewIconCard({ className }) {
         ) : (
           <motion.img
             initial={{ rotate: 0 }}
-            animate={generating ? { rotate: 1000 } : { rotate: 0 }}
-            transition={generating ? { duration: 15 } : { duration: 0 }}
+            animate={generating && !error ? { rotate: 1000 } : { rotate: 0 }}
+            transition={
+              generating && !error ? { duration: 15 } : { duration: 0 }
+            }
             src={gear}
             alt="gear"
             className="w-20 mx-auto"
@@ -150,6 +183,15 @@ function NewIconCard({ className }) {
         >
           {generating ? "GENERATING YOUR ICON..." : "GENERATE ICON"}
         </button>
+        {icon && (
+          <button
+            onClick={handleShare}
+            type="button"
+            className="bg-cyan-600 w-full rounded-full mt-4 py-1 text-white text-lg font-semibold"
+          >
+            {sharing ? "SHARING..." : "SHARE"}
+          </button>
+        )}
       </div>
     </form>
   );

@@ -7,8 +7,9 @@ import { useUser } from "./components/UserContext";
 function App() {
   const [user, setUser] = useUser();
   if (!user) {
-    if (sessionStorage) {
+    if (sessionStorage.getItem("username")) {
       setUser({
+        id: sessionStorage.getItem("id"),
         username: sessionStorage.getItem("username"),
         password: sessionStorage.getItem("password"),
       });

@@ -9,6 +9,7 @@ import {
 } from "./routes/index.js";
 import dalleRoutes from "./routes/dalleRoutes.js";
 import verifyToken from "./middleware/auth.js";
+import postRoutes from "./routes/postRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -27,11 +28,9 @@ app.post("/register", registerHandler);
 
 app.get("/logout", logoutHandler);
 
-app.get("/cookietest", verifyToken, (req, res) => {
-  res.send("testing cookies");
-});
-
 app.use("/api/v1/dalle", dalleRoutes);
+
+app.use("/api/v1/post", postRoutes);
 
 const startServer = async () => {
   app.listen(8080, () => {

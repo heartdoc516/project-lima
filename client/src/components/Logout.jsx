@@ -10,6 +10,8 @@ const Logout = () => {
   async function handleLogout() {
     const response = await fetch("http://localhost:8080/logout");
     setUser(null);
+    sessionStorage.clear();
+
     navigate("/");
   }
 
